@@ -2,9 +2,9 @@ import streamlit as st
 import pandas as pd
 import logging
 
-from config import YEAR, USER_NAMES, GP_OPTIONS
-from data import load_weekend_data
-from scoring import calculate_weekend_points
+from src.config import YEAR, USER_NAMES, GP_OPTIONS
+from src.data import load_weekend_data
+from src.scoring import calculate_weekend_points
 
 # ─── Logging setup ───────────────────────────────────────────────────────────
 
