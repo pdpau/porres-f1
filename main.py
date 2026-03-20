@@ -132,6 +132,66 @@ if "weekend_data" in st.session_state:
                         picks.append(pick)
                     predictions[user][session] = {"top3": picks}
 
+                # ── Extra point ──
+                extra_options = ["Cap", "Posició exacta", "SC/VSC/RF", "DNF"]
+                if extra_type := st.session_state.get(f"{user}_{session}_extra_type", "Cap"):
+                    pass  # read current value before rendering columns
+
+                if extra_type in ("Posició exacta", "SC/VSC/RF"):
+                    xcol1, xcol2, xcol3 = st.columns(3)
+                elif extra_type == "DNF":
+                    xcol1, xcol2 = st.columns(2)
+                else:
+                    xcol1 = st.container()
+                    xcol2 = xcol3 = None
+
+                with xcol1:
+                    extra_type = st.selectbox(
+                        "🎲 Punt extra",
+                        extra_options,
+                        key=f"{user}_{session}_extra_type"
+                    )
+
+                if extra_type == "Posició exacta":
+                    with xcol2:
+                        extra_driver = st.selectbox(
+                            "Pilot", all_drivers,
+                            key=f"{user}_{session}_extra_driver"
+                        )
+                    with xcol3:
+                        extra_pos = st.number_input(
+                            "Posició", min_value=6, max_value=20, value=6, step=1,
+                            key=f"{user}_{session}_extra_pos"
+                        )
+                    predictions[user][session]["extra"] = {
+                        "type": "position", "driver": extra_driver, "position": extra_pos
+                    }
+                elif extra_type == "SC/VSC/RF":
+                    with xcol2:
+                        extra_event = st.selectbox(
+                            "Tipus", ["SC", "VSC", "RF"],
+                            key=f"{user}_{session}_extra_event"
+                        )
+                    with xcol3:
+                        extra_count = st.number_input(
+                            "Quantitat", min_value=0, max_value=10, value=0, step=1,
+                            key=f"{user}_{session}_extra_count"
+                        )
+                    predictions[user][session]["extra"] = {
+                        "type": "sc_vsc_rf", "event_type": extra_event, "count": extra_count
+                    }
+                elif extra_type == "DNF":
+                    with xcol2:
+                        extra_driver = st.selectbox(
+                            "Pilot DNF", all_drivers,
+                            key=f"{user}_{session}_extra_dnf_driver"
+                        )
+                    predictions[user][session]["extra"] = {
+                        "type": "dnf", "driver": extra_driver
+                    }
+                else:
+                    predictions[user][session]["extra"] = {"type": "none"}
+
     # Calculate
     st.divider()
     if st.button("🧮 Calcular punts!", type="primary", use_container_width=True):
@@ -163,10 +223,13 @@ if "weekend_data" in st.session_state:
 
         # ─── Detailed breakdown per user ──────────────────────────────
         REASON_LABELS = {
-            'exact_top5':    'Top 5 exacte (ordre correcte)',
-            'exact_top3':    'Top 3 exacte (ordre correcte)',
-            'top3_no_order': 'Pilots del top 3 correctes (sense ordre)',
-            'top5_no_order': 'Pilots del top 5 correctes (sense ordre)',
+            'exact_top5':      'Top 5 exacte (ordre correcte)',
+            'exact_top3':      'Top 3 exacte (ordre correcte)',
+            'top3_no_order':   'Pilots del top 3 correctes (sense ordre)',
+            'top5_no_order':   'Pilots del top 5 correctes (sense ordre)',
+            'extra_position':  'Punt extra: posició exacta encertada',
+            'extra_sc_vsc_rf': 'Punt extra: SC/VSC/RF encertat',
+            'extra_dnf':       'Punt extra: DNF encertat',
         }
 
         with st.expander("📋 Detall per participant"):

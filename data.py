@@ -29,6 +29,25 @@ def clean_session_data(session_df):
     return session_df
 
 
+def _count_race_control_events(session):
+    """Count SC, VSC and Red Flag deployments from race control messages."""
+    counts = {"SC": 0, "VSC": 0, "RF": 0}
+    try:
+        rcm = session.race_control_messages
+        if rcm is not None and not rcm.empty:
+            for _, msg in rcm.iterrows():
+                message = str(msg.get('Message', '')).upper()
+                if 'VIRTUAL SAFETY CAR DEPLOYED' in message:
+                    counts["VSC"] += 1
+                elif 'SAFETY CAR DEPLOYED' in message:
+                    counts["SC"] += 1
+                elif 'RED FLAG' in message:
+                    counts["RF"] += 1
+    except Exception:
+        pass
+    return counts
+
+
 @st.cache_data(show_spinner="Carregant dades del cap de setmana…")
 def load_weekend_data(year, gp_number):
     gp = f1.get_event(year, gp_number)
@@ -54,12 +73,15 @@ def load_weekend_data(year, gp_number):
         race = gp.get_session('Race')
 
     result = {}
+    race_control = {}
     for name, session in [("SS", ss), ("Sprint", sprint), ("Qualifying", qualy), ("Race", race)]:
         if session is not None:
-            # Only load results — skip laps, telemetry, weather and messages
-            session.load(laps=False, telemetry=False, weather=False, messages=False)
+            session.load(laps=False, telemetry=False, weather=False, messages=True)
             result[name] = clean_session_data(session.results)
+            race_control[name] = _count_race_control_events(session)
         else:
             result[name] = None
+            race_control[name] = None
+    result["RaceControl"] = race_control
 
     return result, gp.EventName, gp.EventFormat
