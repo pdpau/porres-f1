@@ -196,7 +196,6 @@ function SessionCard({ user, session, drivers, savedPredictions, gpNumber, canEd
 	const qc = useQueryClient();
 	const savedData = savedPredictions?.[user]?.[session];
 	const locked = canEdit && isLocked(savedData?.saved_at);
-	const editable = canEdit && !locked;
 
 	const defaultPicks = useMemo(() => {
 		if (savedData?.picks) return savedData.picks;
