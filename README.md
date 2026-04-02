@@ -1,6 +1,6 @@
 # 🏎️ Porres F1 — Recompte de Punts
 
-Aplicació web en **Streamlit** per fer apostes i calcular punts entre participants durant un cap de setmana de Fórmula 1. Utilitza **FastF1** per obtenir els resultats reals de cada sessió.
+Aplicació web en **React + TypeScript** per fer apostes i calcular punts entre participants durant un cap de setmana de Fórmula 1. Utilitza l'**OpenF1 API** per obtenir els resultats reals i **Supabase** com a base de dades.
 
 ---
 
@@ -62,10 +62,23 @@ A cada sessió es pot apostar per **un punt extra addicional** triant una de les
 
 ```
 porres-f1/
-├── main.py        # Interfície Streamlit (UI, prediccions, visualització)
-├── scoring.py     # Lògica de puntuació i punt extra
-├── data.py        # Càrrega de dades via FastF1 (resultats + race control)
-├── config.py      # Configuració: any, participants, calendari 2026
+├── frontend/
+│   ├── src/
+│   │   ├── lib/
+│   │   │   ├── config.ts     # Configuració: any, participants, calendari 2026
+│   │   │   ├── openf1.ts     # Client de l'API OpenF1
+│   │   │   ├── scoring.ts    # Lògica de puntuació i punt extra
+│   │   │   ├── supabase.ts   # Client de Supabase
+│   │   │   └── types.ts      # Tipus compartits
+│   │   ├── components/       # Components React (GPSelector, PredictionForm, etc.)
+│   │   ├── api.ts            # Capa de dades (orquestra OpenF1 + Supabase)
+│   │   ├── App.tsx           # Component principal
+│   │   └── main.tsx          # Punt d'entrada
+│   ├── .env.example          # Variables d'entorn (Supabase)
+│   └── package.json
+├── supabase/
+│   └── schema.sql            # Esquema SQL per crear les taules a Supabase
+├── old/                      # Codi antic (Streamlit + FastF1 + FastAPI)
 └── README.md
 ```
 
@@ -73,12 +86,23 @@ porres-f1/
 
 ## Instal·lació i execució
 
+### 1. Configura Supabase
+
+1. Crea un projecte a [supabase.com](https://supabase.com)
+2. Executa l'esquema SQL a `supabase/schema.sql` al SQL Editor de Supabase
+3. Copia la URL i la clau anon del projecte
+
+### 2. Configura el frontend
+
 ```bash
-pip install streamlit fastf1 pandas
-streamlit run main.py
+cd frontend
+cp .env.example .env
+# Edita .env amb les teves credencials de Supabase
+npm install
+npm run dev
 ```
 
-> FastF1 guarda una caché local de les dades. La primera càrrega d'un GP pot trigar uns segons.
+> Les dades de F1 provenen de l'API OpenF1 (gratuïta, sense clau). Dades disponibles des de la temporada 2023.
 
 ---
 
