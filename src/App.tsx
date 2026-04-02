@@ -11,6 +11,7 @@ import ScoringTab from "./components/ScoringTab";
 import SeasonStandings from "./components/SeasonStandings";
 
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 const queryClient = new QueryClient();
 
@@ -124,6 +125,7 @@ export default function App() {
 		<QueryClientProvider client={queryClient}>
 			<AuthProvider>
 				<Analytics />
+				<SpeedInsights />
 				<AppContent />
 			</AuthProvider>
 		</QueryClientProvider>
