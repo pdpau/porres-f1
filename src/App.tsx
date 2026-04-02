@@ -10,18 +10,22 @@ import PredictionForm from "./components/PredictionForm";
 import ScoringTab from "./components/ScoringTab";
 import SeasonStandings from "./components/SeasonStandings";
 
+import { Analytics } from "@vercel/analytics/react";
+
 const queryClient = new QueryClient();
 
 const calendar: GPCalendarEntry[] = GP_CALENDAR.map((g) => ({
 	number: g.number,
-	name: g.name,
+	name: g.name
 }));
 
 type Tab = "porres" | "results" | "scoring" | "standings";
 
 function AppContent() {
 	const { user, isAdmin, logout } = useAuth();
-	const [selectedGP, setSelectedGP] = useState<number>(calendar[0]?.number ?? 1);
+	const [selectedGP, setSelectedGP] = useState<number>(
+		calendar[0]?.number ?? 1
+	);
 	const [activeTab, setActiveTab] = useState<Tab>("porres");
 
 	if (!user) return <LoginScreen />;
@@ -33,7 +37,8 @@ function AppContent() {
 				<header className="flex flex-col gap-4 mb-8">
 					<div className="flex items-center justify-between">
 						<h1 className="text-xl font-bold tracking-tight text-zinc-100">
-							Porres F1 <span className="text-zinc-500 font-normal">— {YEAR}</span>
+							Porres F1{" "}
+							<span className="text-zinc-500 font-normal">— {YEAR}</span>
 						</h1>
 						<div className="flex items-center gap-2 text-sm">
 							<span className="text-zinc-400">{user.name}</span>
@@ -44,8 +49,7 @@ function AppContent() {
 							)}
 							<button
 								onClick={logout}
-								className="text-zinc-600 hover:text-zinc-400 transition-colors text-xs"
-							>
+								className="text-zinc-600 hover:text-zinc-400 transition-colors text-xs">
 								Sortir
 							</button>
 						</div>
@@ -99,17 +103,17 @@ function AppContent() {
 
 				{/* Content */}
 				{activeTab === "porres" && (
-					<PredictionForm gpNumber={selectedGP} currentUser={user.name} isAdmin={isAdmin} />
+					<PredictionForm
+						gpNumber={selectedGP}
+						currentUser={user.name}
+						isAdmin={isAdmin}
+					/>
 				)}
-				{activeTab === "results" && (
-					<GPResults gpNumber={selectedGP} />
-				)}
+				{activeTab === "results" && <GPResults gpNumber={selectedGP} />}
 				{activeTab === "scoring" && (
 					<ScoringTab gpNumber={selectedGP} isAdmin={isAdmin} />
 				)}
-				{activeTab === "standings" && (
-					<SeasonStandings calendar={calendar} />
-				)}
+				{activeTab === "standings" && <SeasonStandings calendar={calendar} />}
 			</div>
 		</div>
 	);
@@ -119,6 +123,7 @@ export default function App() {
 	return (
 		<QueryClientProvider client={queryClient}>
 			<AuthProvider>
+				<Analytics />
 				<AppContent />
 			</AuthProvider>
 		</QueryClientProvider>
