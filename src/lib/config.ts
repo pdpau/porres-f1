@@ -42,8 +42,8 @@ export const GP_CALENDAR: GPConfig[] = [
 
 /** All 2026 driver abbreviations in your chosen order */
 export const DRIVERS: string[] = [
-  "VER", "NOR", "PIA", "LEC", "HAM",
-  "RUS", "SAI", "ALO", "STR", "GAS",
-  "DOO", "OCO", "TSU", "HAD", "ALB",
-  "COL", "BOT", "BOR", "BEA", "LAW",
+  "RUS", "ANT", "LEC", "HAM", "NOR",
+  "PIA", "VER", "HAD", "LAW", "LIN",
+  "GAS", "COL", "BEA", "OCO", "SAI",
+  "ALB", "BOR", "HUL", "ALO", "STR", "BOT", "PER"
 ];
