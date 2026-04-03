@@ -19,17 +19,23 @@ export default function LoginScreen() {
 	};
 
 	return (
-		<div className="min-h-screen bg-zinc-950 flex items-center justify-center px-4">
-			<div className="w-full max-w-xs">
-				<div className="text-center mb-8">
-					<h1 className="text-xl font-bold text-zinc-100 tracking-tight">
-						Porres F1 <span className="text-zinc-500 font-normal">— {YEAR}</span>
+		<div className="min-h-dvh bg-[#0a0a0c] flex items-center justify-center px-6">
+			<div className="w-full max-w-[320px]">
+				{/* Brand */}
+				<div className="text-center mb-10">
+					<div className="flex justify-center mb-5">
+						<span className="block w-8 h-[2px] bg-red-500 rounded-full" />
+					</div>
+					<h1 className="text-[22px] font-bold tracking-[-0.02em] text-zinc-100">
+						Porres F1
 					</h1>
+					<p className="text-[13px] text-zinc-600 mt-1.5 font-medium">{YEAR}</p>
 				</div>
 
+				{/* Form */}
 				<form onSubmit={handleSubmit} className="flex flex-col gap-4">
 					<div className="flex flex-col gap-1.5">
-						<label className="text-[11px] text-zinc-500 uppercase tracking-wider">
+						<label className="text-[11px] text-zinc-500 font-semibold uppercase tracking-wider">
 							Nom
 						</label>
 						<input
@@ -38,13 +44,13 @@ export default function LoginScreen() {
 							onChange={(e) => setName(e.target.value)}
 							autoFocus
 							autoComplete="username"
-							className="bg-zinc-900 border border-zinc-800/60 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors"
+							className="bg-[#141417] border border-white/[0.06] rounded-lg px-3.5 py-2.5 text-[15px] text-white placeholder-zinc-600 focus:outline-none focus:border-white/[0.12] focus:ring-1 focus:ring-white/[0.06] transition-all duration-150"
 							placeholder="Albert, David o Pau"
 						/>
 					</div>
 
 					<div className="flex flex-col gap-1.5">
-						<label className="text-[11px] text-zinc-500 uppercase tracking-wider">
+						<label className="text-[11px] text-zinc-500 font-semibold uppercase tracking-wider">
 							Contrasenya
 						</label>
 						<input
@@ -52,19 +58,18 @@ export default function LoginScreen() {
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
 							autoComplete="current-password"
-							className="bg-zinc-900 border border-zinc-800/60 rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors"
+							className="bg-[#141417] border border-white/[0.06] rounded-lg px-3.5 py-2.5 text-[15px] text-white placeholder-zinc-600 focus:outline-none focus:border-white/[0.12] focus:ring-1 focus:ring-white/[0.06] transition-all duration-150"
 						/>
 					</div>
 
 					{error && (
-						<p className="text-sm text-red-400">{error}</p>
+						<p className="text-[13px] text-red-400 font-medium">{error}</p>
 					)}
 
 					<button
 						type="submit"
 						disabled={loading || !name.trim() || !password}
-						className="mt-1 py-2 bg-red-600 hover:bg-red-500 active:bg-red-700 disabled:opacity-40 text-white text-sm font-medium rounded-lg transition-colors"
-					>
+						className="mt-2 py-2.5 bg-red-500 hover:bg-red-400 active:bg-red-600 disabled:opacity-30 disabled:hover:bg-red-500 text-white text-[14px] font-semibold rounded-lg transition-all duration-150">
 						{loading ? "Entrant…" : "Entrar"}
 					</button>
 				</form>

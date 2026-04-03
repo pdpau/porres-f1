@@ -1,1 +1,39 @@
 @import "tailwindcss";
+
+@theme {
+	--font-sans:
+		"DM Sans", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+html {
+	-webkit-tap-highlight-color: transparent;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar — pointer devices only */
+@media (pointer: fine) {
+	::-webkit-scrollbar {
+		width: 5px;
+		height: 5px;
+	}
+	::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	::-webkit-scrollbar-thumb {
+		background: rgba(255, 255, 255, 0.05);
+		border-radius: 4px;
+	}
+	::-webkit-scrollbar-thumb:hover {
+		background: rgba(255, 255, 255, 0.1);
+	}
+}
+
+/* Custom select chevron */
+select {
+	-webkit-appearance: none;
+	appearance: none;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%2352525b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 10px center;
+}

@@ -7,9 +7,7 @@ interface SeasonStandingsProps {
 	calendar: GPCalendarEntry[];
 }
 
-export default function SeasonStandings({
-	calendar,
-}: SeasonStandingsProps) {
+export default function SeasonStandings({ calendar }: SeasonStandingsProps) {
 	const users = USER_NAMES;
 	const { data, isLoading } = useQuery({
 		queryKey: ["seasonStandings"],
@@ -18,7 +16,9 @@ export default function SeasonStandings({
 	});
 
 	if (isLoading)
-		return <p className="text-zinc-500 mt-6">Carregant classificació…</p>;
+		return (
+			<p className="text-zinc-600 text-[13px] mt-6">Carregant classificació…</p>
+		);
 
 	const totals = data?.totals ?? {};
 	const perGP = data?.per_gp ?? {};
@@ -31,41 +31,50 @@ export default function SeasonStandings({
 
 	const calMap = Object.fromEntries(calendar.map((g) => [g.number, g.name]));
 
+	const positionStyles = [
+		"border-amber-400/[0.15] bg-amber-400/[0.04]",
+		"border-zinc-400/[0.12] bg-zinc-400/[0.03]",
+		"border-orange-500/[0.12] bg-orange-500/[0.03]"
+	];
+
+	const positionColors = ["text-amber-400", "text-zinc-400", "text-orange-400"];
+
 	return (
-		<div className="mt-6 flex flex-col gap-6">
-			{/* Totals podium */}
-			<div className="grid grid-cols-3 gap-2 sm:gap-4">
+		<div className="flex flex-col gap-5">
+			{/* Podium cards */}
+			<div className="grid grid-cols-3 gap-2 sm:gap-3">
 				{sortedUsers.map((user, i) => (
 					<div
 						key={user}
-						className={`rounded-2xl p-3 sm:p-5 border flex flex-col items-center gap-1 ${
-							i === 0
-								? "border-yellow-500/30 bg-yellow-500/5"
-								: i === 1
-									? "border-zinc-400/30 bg-zinc-400/5"
-									: "border-orange-600/20 bg-orange-600/5"
-						}`}>
-						<span className="text-2xl">
-							{i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}
+						className={`rounded-xl p-3 sm:p-5 border flex flex-col items-center gap-1.5 ${positionStyles[i]}`}>
+						<span
+							className={`text-[11px] font-bold uppercase tracking-widest ${positionColors[i]}`}>
+							{i + 1}r
 						</span>
-						<span className="font-semibold text-sm sm:text-lg">{user}</span>
-						<span className="text-2xl sm:text-3xl font-bold text-red-400">
+						<span className="font-semibold text-[14px] sm:text-[17px] text-zinc-100">
+							{user}
+						</span>
+						<span className="text-[26px] sm:text-[32px] font-bold text-red-400 leading-none tabular-nums">
 							{totals[user] || 0}
 						</span>
-						<span className="text-xs text-zinc-500">punts</span>
+						<span className="text-[11px] text-zinc-600 font-medium">punts</span>
 					</div>
 				))}
 			</div>
 
 			{/* Per-GP breakdown */}
 			{playedGPs.length > 0 && (
-				<div className="overflow-x-auto">
-					<table className="w-full text-sm">
+				<div className="overflow-x-auto rounded-xl border border-white/[0.04] bg-[#111114]">
+					<table className="w-full text-[13px]">
 						<thead>
-							<tr className="border-b border-zinc-800 text-zinc-400">
-								<th className="text-left py-2 pr-4">GP</th>
+							<tr className="border-b border-white/[0.04] text-zinc-500">
+								<th className="text-left py-2.5 pl-4 pr-4 text-[11px] uppercase tracking-wider font-semibold">
+									GP
+								</th>
 								{sortedUsers.map((u) => (
-									<th key={u} className="py-2 px-4 text-center">
+									<th
+										key={u}
+										className="py-2.5 px-3 text-center text-[11px] uppercase tracking-wider font-semibold">
 										{u}
 									</th>
 								))}
@@ -75,26 +84,30 @@ export default function SeasonStandings({
 							{playedGPs.map((gp) => (
 								<tr
 									key={gp}
-									className="border-b border-zinc-800/50 hover:bg-zinc-800/20">
-									<td className="py-2 pr-4 text-zinc-300">
-										<span className="text-zinc-500 mr-2 text-xs">
+									className="border-t border-white/[0.03] hover:bg-white/[0.01] transition-colors duration-100">
+									<td className="py-2.5 pl-4 pr-4 text-zinc-300">
+										<span className="text-zinc-600 mr-1.5 text-[11px] font-mono tabular-nums">
 											R{String(gp).padStart(2, "0")}
 										</span>
 										{calMap[gp] || `GP ${gp}`}
 									</td>
 									{sortedUsers.map((u) => (
-										<td key={u} className="py-2 px-4 text-center text-zinc-300">
+										<td
+											key={u}
+											className="py-2.5 px-3 text-center text-zinc-400 tabular-nums font-mono">
 											{perGP[gp]?.[u] ?? "—"}
 										</td>
 									))}
 								</tr>
 							))}
-							<tr className="border-t border-zinc-700 font-semibold">
-								<td className="py-2 pr-4 text-zinc-200">TOTAL</td>
+							<tr className="border-t border-white/[0.06]">
+								<td className="py-2.5 pl-4 pr-4 text-zinc-200 font-semibold text-[12px] uppercase tracking-wider">
+									Total
+								</td>
 								{sortedUsers.map((u) => (
 									<td
 										key={u}
-										className="py-2 px-4 text-center text-red-400 font-bold">
+										className="py-2.5 px-3 text-center text-red-400 font-bold tabular-nums font-mono">
 										{totals[u] || 0}
 									</td>
 								))}
@@ -105,7 +118,9 @@ export default function SeasonStandings({
 			)}
 
 			{playedGPs.length === 0 && (
-				<p className="text-zinc-500 text-sm">Encara no hi ha GPs calculats.</p>
+				<p className="text-zinc-600 text-[13px]">
+					Encara no hi ha GPs calculats.
+				</p>
 			)}
 		</div>
 	);

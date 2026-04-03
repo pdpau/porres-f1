@@ -4,7 +4,7 @@ import { getPredictions, savePrediction } from "../supabase-api";
 import type {
 	ExtraPrediction,
 	PredictionsMap,
-	SessionKey,
+	SessionKey
 } from "../supabase-api";
 import { USER_NAMES, GP_CALENDAR, DRIVERS } from "../lib/config";
 
@@ -14,14 +14,14 @@ const SESSION_LABELS: Record<SessionKey, string> = {
 	SS: "Sprint Qualifying",
 	Sprint: "Sprint",
 	Qualifying: "Qualifying",
-	Race: "Race",
+	Race: "Race"
 };
 
 const TOP_N: Record<SessionKey, number> = {
 	Race: 5,
 	Sprint: 5,
 	Qualifying: 3,
-	SS: 3,
+	SS: 3
 };
 
 const EXTRA_OPTIONS = ["Cap", "Posició exacta", "SC/VSC/RF", "DNF"] as const;
@@ -54,17 +54,27 @@ interface DriverSelectProps {
 	disabled?: boolean;
 }
 
-function DriverSelect({ drivers, value, onChange, label, disabled }: DriverSelectProps) {
+function DriverSelect({
+	drivers,
+	value,
+	onChange,
+	label,
+	disabled
+}: DriverSelectProps) {
 	return (
 		<div className="flex flex-col gap-1">
-			<label className="text-[11px] text-zinc-500 uppercase tracking-wider">{label}</label>
+			<label className="text-[10px] text-zinc-600 uppercase tracking-wider font-semibold">
+				{label}
+			</label>
 			<select
 				value={value}
 				onChange={(e) => onChange(e.target.value)}
 				disabled={disabled}
-				className="bg-zinc-800 border border-zinc-700/50 rounded-md px-2.5 py-1.5 text-sm font-mono focus:outline-none focus:border-zinc-500 transition-colors min-w-18 disabled:opacity-40 disabled:cursor-not-allowed">
+				className="bg-[#1a1a1e] border border-white/[0.06] rounded-lg px-2.5 py-2 pr-7 text-[13px] font-mono focus:outline-none focus:border-white/[0.12] transition-colors duration-150 min-w-[72px] min-h-[40px] disabled:opacity-30 disabled:cursor-not-allowed">
 				{drivers.map((d) => (
-					<option key={d} value={d}>{d}</option>
+					<option key={d} value={d}>
+						{d}
+					</option>
 				))}
 			</select>
 		</div>
@@ -93,22 +103,27 @@ function ExtraPoint({ drivers, extra, onChange, disabled }: ExtraPointProps) {
 	const setType = (label: string) => {
 		if (label === "Cap") onChange({ type: "none" });
 		else if (label === "Posició exacta")
-			onChange({ type: "position", driver: drivers[5] || drivers[0], position: 6 });
+			onChange({
+				type: "position",
+				driver: drivers[5] || drivers[0],
+				position: 6
+			});
 		else if (label === "SC/VSC/RF")
 			onChange({ type: "sc_vsc_rf", event_type: "SC", count: 0 });
-		else if (label === "DNF")
-			onChange({ type: "dnf", driver: drivers[0] });
+		else if (label === "DNF") onChange({ type: "dnf", driver: drivers[0] });
 	};
 
 	return (
-		<div className="bg-zinc-800/30 rounded-lg p-3 flex flex-col gap-2 border border-zinc-800/40">
+		<div className="bg-white/[0.02] rounded-lg p-3 flex flex-col gap-2.5 border border-white/[0.04]">
 			<div className="flex items-center gap-2">
-				<span className="text-[11px] text-zinc-500 uppercase tracking-wider">Punt extra</span>
+				<span className="text-[10px] text-zinc-600 uppercase tracking-wider font-semibold">
+					Punt extra
+				</span>
 				<select
 					value={typeLabel}
 					onChange={(e) => setType(e.target.value)}
 					disabled={disabled}
-					className="ml-auto bg-zinc-800 border border-zinc-700/50 rounded-md px-2 py-1 text-xs focus:outline-none focus:border-zinc-500 disabled:opacity-40 disabled:cursor-not-allowed">
+					className="ml-auto bg-[#1a1a1e] border border-white/[0.06] rounded-lg px-2 py-1.5 pr-7 text-[12px] focus:outline-none focus:border-white/[0.12] transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed">
 					{EXTRA_OPTIONS.map((o) => (
 						<option key={o}>{o}</option>
 					))}
@@ -125,15 +140,19 @@ function ExtraPoint({ drivers, extra, onChange, disabled }: ExtraPointProps) {
 						disabled={disabled}
 					/>
 					<div className="flex flex-col gap-1">
-						<label className="text-xs text-zinc-500">Posició</label>
+						<label className="text-[10px] text-zinc-600 uppercase tracking-wider font-semibold">
+							Posició
+						</label>
 						<input
 							type="number"
 							min={6}
 							max={20}
 							value={extra.position ?? 6}
-							onChange={(e) => onChange({ ...extra, position: parseInt(e.target.value) })}
+							onChange={(e) =>
+								onChange({ ...extra, position: parseInt(e.target.value) })
+							}
 							disabled={disabled}
-							className="w-16 bg-zinc-800 border border-zinc-700 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-red-500 disabled:opacity-40 disabled:cursor-not-allowed"
+							className="w-16 bg-[#1a1a1e] border border-white/[0.06] rounded-lg px-2 py-2 text-[13px] min-h-[40px] focus:outline-none focus:border-white/[0.12] transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed"
 						/>
 					</div>
 				</div>
@@ -142,27 +161,38 @@ function ExtraPoint({ drivers, extra, onChange, disabled }: ExtraPointProps) {
 			{extra?.type === "sc_vsc_rf" && (
 				<div className="flex gap-2">
 					<div className="flex flex-col gap-1">
-						<label className="text-xs text-zinc-500">Tipus</label>
+						<label className="text-[10px] text-zinc-600 uppercase tracking-wider font-semibold">
+							Tipus
+						</label>
 						<select
 							value={extra.event_type ?? "SC"}
-							onChange={(e) => onChange({ ...extra, event_type: e.target.value as "SC" | "VSC" | "RF" })}
+							onChange={(e) =>
+								onChange({
+									...extra,
+									event_type: e.target.value as "SC" | "VSC" | "RF"
+								})
+							}
 							disabled={disabled}
-							className="bg-zinc-800 border border-zinc-700 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-red-500 disabled:opacity-40 disabled:cursor-not-allowed">
+							className="bg-[#1a1a1e] border border-white/[0.06] rounded-lg px-2 py-2 pr-7 text-[13px] min-h-[40px] focus:outline-none focus:border-white/[0.12] transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed">
 							{(["SC", "VSC", "RF"] as const).map((t) => (
 								<option key={t}>{t}</option>
 							))}
 						</select>
 					</div>
 					<div className="flex flex-col gap-1">
-						<label className="text-xs text-zinc-500">Quantitat</label>
+						<label className="text-[10px] text-zinc-600 uppercase tracking-wider font-semibold">
+							Quantitat
+						</label>
 						<input
 							type="number"
 							min={0}
 							max={10}
 							value={extra.count ?? 0}
-							onChange={(e) => onChange({ ...extra, count: parseInt(e.target.value) })}
+							onChange={(e) =>
+								onChange({ ...extra, count: parseInt(e.target.value) })
+							}
 							disabled={disabled}
-							className="w-16 bg-zinc-800 border border-zinc-700/50 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:border-zinc-500 disabled:opacity-40 disabled:cursor-not-allowed"
+							className="w-16 bg-[#1a1a1e] border border-white/[0.06] rounded-lg px-2 py-2 text-[13px] min-h-[40px] focus:outline-none focus:border-white/[0.12] transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed"
 						/>
 					</div>
 				</div>
@@ -192,7 +222,14 @@ interface SessionCardProps {
 	canEdit: boolean;
 }
 
-function SessionCard({ user, session, drivers, savedPredictions, gpNumber, canEdit }: SessionCardProps) {
+function SessionCard({
+	user,
+	session,
+	drivers,
+	savedPredictions,
+	gpNumber,
+	canEdit
+}: SessionCardProps) {
 	const qc = useQueryClient();
 	const savedData = savedPredictions?.[user]?.[session];
 	const locked = canEdit && isLocked(savedData?.saved_at);
@@ -216,7 +253,8 @@ function SessionCard({ user, session, drivers, savedPredictions, gpNumber, canEd
 
 	const saveMutation = useMutation({
 		mutationFn: () => savePrediction(gpNumber, user, session, picks, extras),
-		onSuccess: () => qc.invalidateQueries({ queryKey: ["predictions", gpNumber] }),
+		onSuccess: () =>
+			qc.invalidateQueries({ queryKey: ["predictions", gpNumber] })
 	});
 
 	const updatePick = (idx: number, driver: string) => {
@@ -239,20 +277,27 @@ function SessionCard({ user, session, drivers, savedPredictions, gpNumber, canEd
 	if (!canEdit) {
 		if (!savedData) {
 			return (
-				<div className="flex items-center gap-2 py-1.5">
-					<span className="text-sm text-zinc-500 w-32">{SESSION_LABELS[session]}</span>
-					<span className="text-xs text-zinc-600 italic">Sense porra</span>
+				<div className="flex items-center gap-2 py-2">
+					<span className="text-[13px] text-zinc-500 w-32 shrink-0">
+						{SESSION_LABELS[session]}
+					</span>
+					<span className="text-[12px] text-zinc-700 italic">Sense porra</span>
 				</div>
 			);
 		}
 		return (
-			<div className="flex flex-col gap-1 py-1.5">
+			<div className="flex flex-col gap-1 py-2">
 				<div className="flex items-center gap-2 flex-wrap">
-					<span className="text-sm text-zinc-500 w-32">{SESSION_LABELS[session]}</span>
-					<span className="text-sm font-mono text-zinc-300">{savedData.picks.join(", ")}</span>
+					<span className="text-[13px] text-zinc-500 w-32 shrink-0">
+						{SESSION_LABELS[session]}
+					</span>
+					<span className="text-[13px] font-mono text-zinc-300 tabular-nums">
+						{savedData.picks.join(", ")}
+					</span>
 					{savedData.extra && savedData.extra.type !== "none" && (
-						<span className="text-xs text-zinc-500 ml-1">
-							+ {savedData.extra.type === "position"
+						<span className="text-[11px] text-zinc-600 ml-1">
+							+{" "}
+							{savedData.extra.type === "position"
 								? `P${savedData.extra.position} ${savedData.extra.driver}`
 								: savedData.extra.type === "sc_vsc_rf"
 									? `${savedData.extra.event_type} ×${savedData.extra.count}`
@@ -269,13 +314,18 @@ function SessionCard({ user, session, drivers, savedPredictions, gpNumber, canEd
 	// Locked view (was editable but 15 min passed)
 	if (locked) {
 		return (
-			<div className="flex flex-col gap-1 py-1.5">
+			<div className="flex flex-col gap-1 py-2">
 				<div className="flex items-center gap-2 flex-wrap">
-					<span className="text-sm text-zinc-500 w-32">{SESSION_LABELS[session]}</span>
-					<span className="text-sm font-mono text-zinc-300">{savedData!.picks.join(", ")}</span>
+					<span className="text-[13px] text-zinc-500 w-32 shrink-0">
+						{SESSION_LABELS[session]}
+					</span>
+					<span className="text-[13px] font-mono text-zinc-300 tabular-nums">
+						{savedData!.picks.join(", ")}
+					</span>
 					{savedData!.extra && savedData!.extra.type !== "none" && (
-						<span className="text-xs text-zinc-500 ml-1">
-							+ {savedData!.extra.type === "position"
+						<span className="text-[11px] text-zinc-600 ml-1">
+							+{" "}
+							{savedData!.extra.type === "position"
 								? `P${savedData!.extra.position} ${savedData!.extra.driver}`
 								: savedData!.extra.type === "sc_vsc_rf"
 									? `${savedData!.extra.event_type} ×${savedData!.extra.count}`
@@ -284,7 +334,9 @@ function SessionCard({ user, session, drivers, savedPredictions, gpNumber, canEd
 										: ""}
 						</span>
 					)}
-					<span className="text-[10px] text-amber-500/60 border border-amber-500/20 bg-amber-500/5 px-1.5 py-0.5 rounded ml-auto">blocat</span>
+					<span className="text-[10px] text-amber-400/50 border border-amber-400/[0.12] bg-amber-400/[0.04] px-1.5 py-0.5 rounded font-semibold ml-auto">
+						blocat
+					</span>
 				</div>
 			</div>
 		);
@@ -292,16 +344,18 @@ function SessionCard({ user, session, drivers, savedPredictions, gpNumber, canEd
 
 	// Editable view
 	return (
-		<div className="flex flex-col gap-3 py-2">
+		<div className="flex flex-col gap-3 py-2.5">
 			<div className="flex items-center justify-between">
-				<span className="text-sm font-medium text-zinc-300">{SESSION_LABELS[session]}</span>
+				<span className="text-[13px] font-semibold text-zinc-200">
+					{SESSION_LABELS[session]}
+				</span>
 				<button
 					onClick={() => saveMutation.mutate()}
 					disabled={saveMutation.isPending || !hasChanged()}
-					className={`text-xs px-3 py-1 rounded-md transition-colors ${
+					className={`text-[12px] px-3 py-1.5 rounded-lg font-medium transition-all duration-150 ${
 						!hasChanged()
-							? "bg-emerald-900/40 text-emerald-400 border border-emerald-800/30 cursor-default"
-							: "bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/40"
+							? "bg-emerald-500/[0.08] text-emerald-400/80 border border-emerald-500/[0.12] cursor-default"
+							: "bg-white/[0.04] hover:bg-white/[0.07] text-zinc-300 border border-white/[0.06] active:bg-white/[0.1]"
 					}`}>
 					{saveMutation.isPending ? "…" : !hasChanged() ? "✓ Desat" : "Desar"}
 				</button>
@@ -340,20 +394,33 @@ interface UserCardProps {
 	isAdmin: boolean;
 }
 
-function UserCard({ user, sessions, drivers, savedPredictions, gpNumber, canEdit, isAdmin }: UserCardProps) {
+function UserCard({
+	user,
+	sessions,
+	drivers,
+	savedPredictions,
+	gpNumber,
+	canEdit,
+	isAdmin
+}: UserCardProps) {
 	const hasPredictions = sessions.some((s) => savedPredictions?.[user]?.[s]);
 
 	return (
-		<div className={`rounded-lg border bg-zinc-900/50 p-5 flex flex-col gap-2 ${
-			canEdit ? "border-zinc-700/50" : "border-zinc-800/40"
-		}`}>
-			<div className="flex items-center gap-2 border-b border-zinc-800/40 pb-3">
-				<h2 className="text-base font-semibold">{user}</h2>
+		<div
+			className={`rounded-xl border bg-[#111114] p-4 sm:p-5 flex flex-col gap-2 ${
+				canEdit ? "border-white/[0.06]" : "border-white/[0.04]"
+			}`}>
+			<div className="flex items-center gap-2 border-b border-white/[0.04] pb-3">
+				<h2 className="text-[15px] font-semibold text-zinc-100">{user}</h2>
 				{canEdit && (
-					<span className="text-[10px] uppercase tracking-wider text-emerald-500/60">editable</span>
+					<span className="text-[9px] uppercase tracking-widest text-emerald-400/50 font-bold">
+						editable
+					</span>
 				)}
 				{!hasPredictions && (
-					<span className="text-xs text-zinc-600 ml-auto">Sense porres</span>
+					<span className="text-[12px] text-zinc-700 ml-auto">
+						Sense porres
+					</span>
 				)}
 			</div>
 
@@ -380,26 +447,31 @@ interface PredictionFormProps {
 	isAdmin: boolean;
 }
 
-export default function PredictionForm({ gpNumber, currentUser, isAdmin }: PredictionFormProps) {
+export default function PredictionForm({
+	gpNumber,
+	currentUser,
+	isAdmin
+}: PredictionFormProps) {
 	const sessions = getSessionsForGP(gpNumber);
 	const drivers = DRIVERS;
 
 	const { data: savedPredictions } = useQuery<PredictionsMap>({
 		queryKey: ["predictions", gpNumber],
-		queryFn: () => getPredictions(gpNumber),
+		queryFn: () => getPredictions(gpNumber)
 	});
 
-	const gpName = GP_CALENDAR.find((g) => g.number === gpNumber)?.name ?? `GP ${gpNumber}`;
+	const gpName =
+		GP_CALENDAR.find((g) => g.number === gpNumber)?.name ?? `GP ${gpNumber}`;
 
 	return (
-		<div className="mt-6 flex flex-col gap-6">
-			<div className="flex items-baseline gap-2">
-				<h2 className="text-sm font-medium text-zinc-400">
-					Porres —{" "}
-					<span className="text-zinc-300">{gpName}</span>
+		<div className="flex flex-col gap-4">
+			<div className="flex items-baseline gap-2 flex-wrap">
+				<h2 className="text-[13px] font-medium text-zinc-400">
+					Porres — <span className="text-zinc-200 font-semibold">{gpName}</span>
 				</h2>
 				<span className="text-[11px] text-zinc-600">
-					{sessions.length === 4 ? "Sprint weekend" : "Convencional"} · {sessions.length} sessions
+					{sessions.length === 4 ? "Sprint weekend" : "Convencional"} ·{" "}
+					{sessions.length} sessions
 				</span>
 			</div>
 
@@ -428,7 +500,7 @@ export default function PredictionForm({ gpNumber, currentUser, isAdmin }: Predi
 				/>
 			))}
 
-			<p className="text-[11px] text-zinc-600 text-center">
+			<p className="text-[11px] text-zinc-700 text-center pb-2">
 				Un cop desada, la porra es bloqueja al cap de {LOCK_MINUTES} minuts.
 				{isAdmin && " (admin pot editar sempre)"}
 			</p>

@@ -1,6 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { getGPData } from "../supabase-api";
-import type { GPData, SessionKey, DriverResult, RaceControlCounts } from "../supabase-api";
+import type {
+	GPData,
+	SessionKey,
+	DriverResult,
+	RaceControlCounts
+} from "../supabase-api";
 
 const SESSION_ORDER: SessionKey[] = ["SS", "Sprint", "Qualifying", "Race"];
 
@@ -8,7 +13,7 @@ const SESSION_LABELS: Record<SessionKey, string> = {
 	SS: "Sprint Qualifying",
 	Sprint: "Sprint",
 	Qualifying: "Qualifying",
-	Race: "Race",
+	Race: "Race"
 };
 
 function isQualiSession(s: SessionKey): boolean {
@@ -60,20 +65,23 @@ function RaceControlBadges({ rc }: { rc: RaceControlCounts }) {
 	};
 
 	return (
-		<div className="flex gap-2 flex-wrap mt-1.5">
+		<div className="flex gap-2 flex-wrap mt-2">
 			{scEvents.length > 0 && (
-				<span className="inline-flex items-center gap-1 bg-amber-500/15 text-amber-400 text-[11px] font-medium px-2 py-0.5 rounded-md border border-amber-500/20">
-					SC ×{scEvents.length}{formatLaps(scEvents)}
+				<span className="inline-flex items-center gap-1 bg-amber-500/[0.08] text-amber-400/90 text-[10px] font-semibold px-2 py-0.5 rounded border border-amber-500/[0.12]">
+					SC ×{scEvents.length}
+					{formatLaps(scEvents)}
 				</span>
 			)}
 			{vscEvents.length > 0 && (
-				<span className="inline-flex items-center gap-1 bg-amber-500/10 text-amber-500/80 text-[11px] font-medium px-2 py-0.5 rounded-md border border-amber-500/15">
-					VSC ×{vscEvents.length}{formatLaps(vscEvents)}
+				<span className="inline-flex items-center gap-1 bg-amber-500/[0.06] text-amber-500/70 text-[10px] font-semibold px-2 py-0.5 rounded border border-amber-500/[0.08]">
+					VSC ×{vscEvents.length}
+					{formatLaps(vscEvents)}
 				</span>
 			)}
 			{rfEvents.length > 0 && (
-				<span className="inline-flex items-center gap-1 bg-red-500/15 text-red-400 text-[11px] font-medium px-2 py-0.5 rounded-md border border-red-500/20">
-					Red Flag ×{rfEvents.length}{formatLaps(rfEvents)}
+				<span className="inline-flex items-center gap-1 bg-red-500/[0.08] text-red-400/90 text-[10px] font-semibold px-2 py-0.5 rounded border border-red-500/[0.12]">
+					Red Flag ×{rfEvents.length}
+					{formatLaps(rfEvents)}
 				</span>
 			)}
 		</div>
@@ -90,12 +98,12 @@ export default function GPResults({ gpNumber }: GPResultsProps) {
 		isLoading,
 		error,
 		refetch,
-		isFetched,
+		isFetched
 	} = useQuery<GPData>({
 		queryKey: ["gpData", gpNumber],
 		queryFn: () => getGPData(gpNumber),
 		enabled: false,
-		retry: false,
+		retry: false
 	});
 
 	const sessions: SessionKey[] = gpData
@@ -103,64 +111,66 @@ export default function GPResults({ gpNumber }: GPResultsProps) {
 		: [];
 
 	return (
-		<div className="flex flex-col gap-5">
+		<div className="flex flex-col gap-4">
 			{/* Load bar */}
-			<div className="flex items-center gap-4">
+			<div className="flex items-center gap-3 flex-wrap">
 				<button
 					onClick={() => refetch()}
 					disabled={isLoading}
-					className="px-5 py-2 bg-red-600 hover:bg-red-500 active:bg-red-700 disabled:opacity-40 text-white text-sm font-medium rounded-lg transition-colors"
-				>
+					className="px-4 py-2.5 bg-red-500 hover:bg-red-400 active:bg-red-600 disabled:opacity-30 text-white text-[13px] font-semibold rounded-lg transition-all duration-150">
 					{isLoading ? "Carregant…" : "Carregar dades"}
 				</button>
 				{gpData && (
-					<span className="text-sm text-zinc-400">
-						<strong className="text-zinc-200">{gpData.event_name}</strong>
+					<p className="text-[13px] text-zinc-400">
+						<span className="font-medium text-zinc-200">
+							{gpData.event_name}
+						</span>
 						{" · "}
 						<span className="text-zinc-500">
-							{gpData.event_format === "sprint_qualifying" ? "Sprint" : "Convencional"}
+							{gpData.event_format === "sprint_qualifying"
+								? "Sprint"
+								: "Convencional"}
 						</span>
-					</span>
+					</p>
 				)}
 			</div>
 
 			{error && (
-				<p className="text-sm text-red-400">{(error as Error).message}</p>
+				<p className="text-[13px] text-red-400 font-medium">
+					{(error as Error).message}
+				</p>
 			)}
 
 			{isFetched && !gpData && !error && (
-				<p className="text-zinc-500 text-sm">
+				<p className="text-zinc-500 text-[13px]">
 					No s'han trobat resultats per aquest GP.
 				</p>
 			)}
 
 			{/* Session tables */}
 			{gpData && sessions.length > 0 && (
-				<div className="grid gap-4 lg:grid-cols-2">
+				<div className="grid gap-3 lg:grid-cols-2">
 					{sessions.map((s) => {
-						const results = (gpData.results[s] ?? []).slice().sort(
-							(a, b) => {
-								if (a.Position == null && b.Position == null) return 0;
-								if (a.Position == null) return 1;
-								if (b.Position == null) return -1;
-								return a.Position - b.Position;
-							}
-						);
+						const results = (gpData.results[s] ?? []).slice().sort((a, b) => {
+							if (a.Position == null && b.Position == null) return 0;
+							if (a.Position == null) return 1;
+							if (b.Position == null) return -1;
+							return a.Position - b.Position;
+						});
 						const rc = gpData.race_control?.[s];
 						const isQual = isQualiSession(s);
 						return (
 							<div
 								key={s}
-								className="rounded-lg border border-zinc-800/60 bg-zinc-900/50 overflow-hidden"
-							>
+								className="rounded-xl border border-white/[0.04] bg-[#111114] overflow-hidden">
 								{/* Header */}
-								<div className="px-4 py-3 border-b border-zinc-800/40">
+								<div className="px-4 py-3 border-b border-white/[0.04]">
 									<div className="flex items-baseline justify-between">
-										<h3 className="text-[13px] font-semibold tracking-wide text-zinc-100 uppercase">
+										<h3 className="text-[12px] font-bold tracking-wider text-zinc-300 uppercase">
 											{SESSION_LABELS[s]}
 										</h3>
 										{!isQual && results.length > 0 && (
-											<span className="text-[11px] text-zinc-500">
+											<span className="text-[11px] text-zinc-600">
 												{results[0]?.number_of_laps || ""} voltes
 											</span>
 										)}
@@ -172,11 +182,13 @@ export default function GPResults({ gpNumber }: GPResultsProps) {
 								<div className="overflow-x-auto">
 									<table className="w-full text-[13px]">
 										<thead>
-											<tr className="text-zinc-500 text-[11px] uppercase tracking-wider">
+											<tr className="text-zinc-600 text-[10px] uppercase tracking-wider font-semibold">
 												<th className="text-left py-2 pl-4 pr-1 w-9">#</th>
 												<th className="text-left py-2 pr-2">Pilot</th>
 												<th className="text-left py-2 pr-2">Equip</th>
-												<th className="text-right py-2 pr-2">{isQual ? "Temps" : "Gap"}</th>
+												<th className="text-right py-2 pr-2">
+													{isQual ? "Temps" : "Gap"}
+												</th>
 												<th className="text-center py-2 pr-4 w-12"></th>
 											</tr>
 										</thead>
@@ -194,31 +206,34 @@ export default function GPResults({ gpNumber }: GPResultsProps) {
 												return (
 													<tr
 														key={r.DriverNumber}
-														className={`border-t border-zinc-800/20 ${
-															isTop3 ? "text-zinc-100" : status ? "text-zinc-500" : "text-zinc-400"
-														}`}
-													>
-														<td className="py-1.5 pl-4 pr-1 font-mono text-xs text-zinc-500 tabular-nums">
+														className={`border-t border-white/[0.03] ${
+															isTop3
+																? "text-zinc-100"
+																: status
+																	? "text-zinc-600"
+																	: "text-zinc-400"
+														}`}>
+														<td className="py-2 pl-4 pr-1 font-mono text-[12px] text-zinc-600 tabular-nums">
 															{r.Position ?? "—"}
 														</td>
-														<td className="py-1.5 pr-2 font-mono font-semibold tracking-wide">
+														<td className="py-2 pr-2 font-mono font-semibold tracking-wide text-[13px]">
 															{r.Abbreviation}
 														</td>
-														<td className="py-1.5 pr-2 text-zinc-500 text-xs whitespace-nowrap">
+														<td className="py-2 pr-2 text-zinc-500 text-[12px] whitespace-nowrap">
 															<span
-																className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 align-middle"
+																className="inline-block w-[5px] h-[5px] rounded-full mr-1.5 align-middle"
 																style={{
-																	backgroundColor: `#${r.TeamColour || "666"}`,
+																	backgroundColor: `#${r.TeamColour || "666"}`
 																}}
 															/>
 															{r.TeamName}
 														</td>
-														<td className="py-1.5 pr-2 text-right font-mono text-xs tabular-nums text-zinc-400">
+														<td className="py-2 pr-2 text-right font-mono text-[12px] tabular-nums text-zinc-500">
 															{timeStr}
 														</td>
-														<td className="py-1.5 pr-4 text-center text-xs">
+														<td className="py-2 pr-4 text-center text-[11px]">
 															{status && (
-																<span className="text-red-400/80 font-medium">
+																<span className="text-red-400/70 font-semibold">
 																	{status}
 																</span>
 															)}
@@ -236,7 +251,7 @@ export default function GPResults({ gpNumber }: GPResultsProps) {
 			)}
 
 			{gpData && sessions.length === 0 && (
-				<p className="text-zinc-500 text-sm">
+				<p className="text-zinc-500 text-[13px]">
 					Encara no hi ha resultats disponibles per aquest GP.
 				</p>
 			)}

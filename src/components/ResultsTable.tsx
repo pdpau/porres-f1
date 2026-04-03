@@ -25,21 +25,29 @@ export default function ResultsTable({ results, sessions }: ResultsTableProps) {
 
 	return (
 		<div className="mt-6 flex flex-col gap-4">
-			<h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-400">Puntuació</h2>
+			<h2 className="text-[10px] font-semibold uppercase tracking-[0.08em] text-zinc-500">
+				Puntuació
+			</h2>
 
 			{/* ─── Summary table ─────────────────────────────────────────── */}
-			<div className="overflow-x-auto">
-				<table className="w-full text-sm">
+			<div className="overflow-x-auto rounded-xl border border-white/[0.04] bg-[#111114]">
+				<table className="w-full text-[13px]">
 					<thead>
-						<tr className="border-b border-zinc-800 text-zinc-400">
-							<th className="text-left py-2 pr-4">Pos</th>
-							<th className="text-left py-2 pr-4">Participant</th>
+						<tr className="border-b border-white/[0.06] text-zinc-500">
+							<th className="text-left py-2.5 pl-4 pr-2 text-[10px] font-semibold uppercase tracking-wider">
+								Pos
+							</th>
+							<th className="text-left py-2.5 pr-4 text-[10px] font-semibold uppercase tracking-wider">
+								Participant
+							</th>
 							{sessions.map((s) => (
-								<th key={s} className="py-2 px-3 text-center">
+								<th
+									key={s}
+									className="py-2.5 px-3 text-center text-[10px] font-semibold uppercase tracking-wider">
 									{s}
 								</th>
 							))}
-							<th className="py-2 px-3 text-center font-semibold text-white">
+							<th className="py-2.5 px-3 text-center text-[10px] font-semibold uppercase tracking-wider text-zinc-300">
 								TOTAL
 							</th>
 						</tr>
@@ -48,20 +56,24 @@ export default function ResultsTable({ results, sessions }: ResultsTableProps) {
 						{sorted.map((user, i) => (
 							<tr
 								key={user}
-								className="border-b border-zinc-800/50 hover:bg-zinc-800/30">
-								<td className="py-2 pr-4 text-zinc-500">{i + 1}</td>
-								<td className="py-2 pr-4 font-medium">{user}</td>
+								className="border-b border-white/[0.03] last:border-0">
+								<td className="py-2 pl-4 pr-2 text-zinc-600 tabular-nums font-mono">
+									{i + 1}
+								</td>
+								<td className="py-2 pr-4 font-medium text-zinc-200">{user}</td>
 								{sessions.map((s) => {
 									const sessionData = results[user]?.[s] as
 										| SessionBreakdown
 										| undefined;
 									return (
-										<td key={s} className="py-2 px-3 text-center text-zinc-300">
+										<td
+											key={s}
+											className="py-2 px-3 text-center text-zinc-400 tabular-nums font-mono">
 											{sessionData?.total ?? 0}
 										</td>
 									);
 								})}
-								<td className="py-2 px-3 text-center font-bold text-red-400">
+								<td className="py-2 px-3 text-center font-bold text-red-400 tabular-nums font-mono">
 									{results[user]?.total ?? 0}
 								</td>
 							</tr>
@@ -71,16 +83,18 @@ export default function ResultsTable({ results, sessions }: ResultsTableProps) {
 			</div>
 
 			{/* ─── Detailed breakdown ────────────────────────────────────── */}
-			<details className="rounded-lg border border-zinc-800/60 bg-zinc-900/50 p-4">
-				<summary className="cursor-pointer text-sm text-zinc-500 hover:text-zinc-300">
+			<details className="rounded-xl border border-white/[0.04] bg-[#111114] p-4">
+				<summary className="cursor-pointer text-[13px] text-zinc-500 hover:text-zinc-300 transition-colors">
 					Detall per participant
 				</summary>
 				<div className="mt-3 flex flex-col gap-3">
 					{sorted.map((user) => (
 						<div key={user}>
-							<p className="font-medium">
+							<p className="font-medium text-[13px] text-zinc-200">
 								{user} —{" "}
-								<span className="text-red-400">{results[user]?.total} pts</span>
+								<span className="text-red-400 tabular-nums font-mono">
+									{results[user]?.total} pts
+								</span>
 							</p>
 							{sessions.map((s) => {
 								const sr = results[user]?.[s] as SessionBreakdown | undefined;
@@ -89,9 +103,11 @@ export default function ResultsTable({ results, sessions }: ResultsTableProps) {
 									.filter((k) => k !== "total")
 									.map((k) => REASON_LABELS[k] || k);
 								return (
-									<p key={s} className="text-sm text-zinc-400 ml-4">
+									<p key={s} className="text-[12px] text-zinc-500 ml-4">
 										{s}:{" "}
-										<strong className="text-zinc-200">{sr.total} pts</strong>
+										<strong className="text-zinc-300 tabular-nums font-mono">
+											{sr.total} pts
+										</strong>
 										{reasons.length > 0 && ` (${reasons.join(", ")})`}
 									</p>
 								);
