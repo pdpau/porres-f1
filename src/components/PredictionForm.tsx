@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getPredictions, savePrediction } from "../supabase-api";
+import { getPredictions, savePrediction, getGPScores } from "../supabase-api";
 import type {
 	ExtraPrediction,
 	PredictionsMap,
@@ -460,6 +460,13 @@ export default function PredictionForm({
 		queryFn: () => getPredictions(gpNumber)
 	});
 
+	// GP is permanently closed once an admin has calculated & saved scores
+	const { data: gpScores } = useQuery({
+		queryKey: ["gpScores", gpNumber],
+		queryFn: () => getGPScores(gpNumber)
+	});
+	const gpClosed = !!gpScores;
+
 	const gpName =
 		GP_CALENDAR.find((g) => g.number === gpNumber)?.name ?? `GP ${gpNumber}`;
 
@@ -473,20 +480,31 @@ export default function PredictionForm({
 					{sessions.length === 4 ? "Sprint weekend" : "Convencional"} ·{" "}
 					{sessions.length} sessions
 				</span>
+				{gpClosed && (
+					<span className="ml-auto text-[10px] uppercase tracking-wider text-red-400/60 bg-red-500/10 px-1.5 py-0.5 rounded border border-red-500/20">
+						tancat
+					</span>
+				)}
 			</div>
 
-			{/* Current user first (always editable) */}
+			{gpClosed && (
+				<div className="rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-3 text-[13px] text-red-400/80">
+					Els punts d'aquest GP ja han estat calculats. Les porres no es poden modificar.
+				</div>
+			)}
+
+			{/* Current user — read-only if GP is closed */}
 			<UserCard
 				user={currentUser}
 				sessions={sessions}
 				drivers={drivers}
 				savedPredictions={savedPredictions}
 				gpNumber={gpNumber}
-				canEdit={true}
-				isAdmin={isAdmin}
+				canEdit={!gpClosed}
+				isAdmin={false}
 			/>
 
-			{/* Other users (read-only, or editable if admin) */}
+			{/* Other users (read-only always; admin could edit but locked when GP closed) */}
 			{USER_NAMES.filter((u) => u !== currentUser).map((otherUser) => (
 				<UserCard
 					key={otherUser}
@@ -495,15 +513,16 @@ export default function PredictionForm({
 					drivers={drivers}
 					savedPredictions={savedPredictions}
 					gpNumber={gpNumber}
-					canEdit={isAdmin}
-					isAdmin={isAdmin}
+					canEdit={!gpClosed && isAdmin}
+					isAdmin={false}
 				/>
 			))}
 
-			<p className="text-[11px] text-zinc-700 text-center pb-2">
-				Un cop desada, la porra es bloqueja al cap de {LOCK_MINUTES} minuts.
-				{isAdmin && " (admin pot editar sempre)"}
-			</p>
+			{!gpClosed && (
+				<p className="text-[11px] text-zinc-700 text-center pb-2">
+					Un cop desada, la porra es bloqueja al cap de {LOCK_MINUTES} minuts.
+				</p>
+			)}
 		</div>
 	);
 }
