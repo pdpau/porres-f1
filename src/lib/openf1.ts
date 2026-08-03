@@ -86,16 +86,28 @@ async function fetchPositionsNearEnd(
 
 const meetingsCache = new Map<number, OpenF1Meeting[]>();
 
+// Word-boundary match — a plain substring check would let "Spa" match inside
+// "Spain" (Belgium's term vs. Barcelona's country_name), pulling in the wrong meeting.
+function termMatches(field: string | undefined, term: string): boolean {
+  if (!field) return false;
+  const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`\\b${escaped}\\b`, "i").test(field);
+}
+
 function findMeeting(meetings: OpenF1Meeting[], gp: GPConfig): OpenF1Meeting | undefined {
-  return meetings.find((m) =>
-    gp.matchTerms.some(
-      (term) =>
-        m.meeting_name?.includes(term) ||
-        m.country_name?.includes(term) ||
-        m.location?.includes(term) ||
-        m.circuit_short_name?.includes(term),
-    ),
-  );
+  // Testing weekends share country/location with a real GP (e.g. Bahrain
+  // pre-season testing vs. the Bahrain Grand Prix) — never treat them as a race round.
+  return meetings
+    .filter((m) => m.meeting_name !== "Pre-Season Testing")
+    .find((m) =>
+      gp.matchTerms.some(
+        (term) =>
+          termMatches(m.meeting_name, term) ||
+          termMatches(m.country_name, term) ||
+          termMatches(m.location, term) ||
+          termMatches(m.circuit_short_name, term),
+      ),
+    );
 }
 
 function findSession(sessions: OpenF1Session[], key: SessionKey): OpenF1Session | undefined {

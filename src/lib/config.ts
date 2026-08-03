@@ -32,7 +32,7 @@ export const GP_CALENDAR: GPConfig[] = [
   { number: 16, name: "Spain (Madrid)",   matchTerms: ["Madrid"],                          sprint: false },
   { number: 17, name: "Azerbaijan",       matchTerms: ["Azerbaijan"],                      sprint: false },
   { number: 18, name: "Singapore",        matchTerms: ["Singapore"],                       sprint: true  },
-  { number: 19, name: "United States",    matchTerms: ["Austin", "United States"],         sprint: false },
+  { number: 19, name: "United States",    matchTerms: ["Austin"],                          sprint: false },
   { number: 20, name: "Mexico",           matchTerms: ["Mexico"],                          sprint: false },
   { number: 21, name: "Brazil",           matchTerms: ["Brazil"],                          sprint: false },
   { number: 22, name: "Las Vegas",        matchTerms: ["Las Vegas"],                       sprint: false },
